@@ -8,7 +8,7 @@ interface ImageViewerProps {
   onBackgroundChange: (id: BackgroundId) => void;
 }
 
-const ZOOM_LEVELS = [0.75, 1.0, 1.25, 1.5];
+const ZOOM_LEVELS = [1.0, 1.5, 2.0, 2.5];
 
 const Spinner: React.FC = () => (
   <div className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none">
@@ -30,24 +30,11 @@ const FallbackImage: React.FC = () => (
 export const ImageViewer: React.FC<ImageViewerProps> = ({ imageUrl, currentBackground, onBackgroundChange }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [displayUrl, setDisplayUrl] = useState(imageUrl);
-  const [zoomIndex, setZoomIndex] = useState(1); // Default to 100% (index 1 of [0.75, 1.0, 1.25, 1.5])
+  const [zoomIndex, setZoomIndex] = useState(1); // Default to 1.5
 
   useEffect(() => {
     setIsLoading(true);
     setHasError(false);
-    
-    const img = new Image();
-    img.src = imageUrl;
-    img.onload = () => {
-      setDisplayUrl(imageUrl);
-      setIsLoading(false);
-      setHasError(false);
-    };
-    img.onerror = () => {
-      setIsLoading(false);
-      setHasError(true);
-    };
   }, [imageUrl]);
 
   const handleZoomIn = () => {
@@ -110,7 +97,7 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({ imageUrl, currentBackg
         
         <div className="px-1.5 lg:px-2 min-w-[42px] lg:min-w-[60px] text-center">
             <span className="text-[10px] lg:text-xs font-black text-gray-900 tabular-nums">
-                {Math.round(currentZoom * 100)}%
+                {Math.round((currentZoom / 1.5) * 100)}%
             </span>
         </div>
 
@@ -150,9 +137,14 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({ imageUrl, currentBackg
               style={{ transform: `scale(${currentZoom})` }}
             >
                 <img
-                    src={displayUrl}
-                    alt="Solero Basto Parasol"
-                    className={`object-contain w-full h-full p-6 lg:p-12 drop-shadow-2xl transition-opacity duration-300 ${isLoading ? 'opacity-80' : 'opacity-100'}`}
+                    src={imageUrl}
+                    alt="Solero Bravo Parasol"
+                    onLoad={() => setIsLoading(false)}
+                    onError={() => {
+                        setIsLoading(false);
+                        setHasError(true);
+                    }}
+                    className={`object-contain w-full h-full p-6 lg:p-12 drop-shadow-2xl transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
                 />
             </div>
         ) : (
@@ -163,7 +155,7 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({ imageUrl, currentBackg
       {/* Product Tag Badge */}
       <div className="absolute bottom-4 left-4 lg:bottom-6 lg:left-6 z-30 pointer-events-none">
           <div className="bg-white/70 lg:bg-white/80 backdrop-blur-sm px-2.5 py-1 lg:px-3 lg:py-1.5 rounded-full shadow-sm border border-gray-100/30 lg:border-gray-100">
-              <span className="text-[8px] lg:text-[10px] font-bold text-gray-900 tracking-wider uppercase">SOLERO BASTO</span>
+              <span className="text-[8px] lg:text-[10px] font-bold text-gray-900 tracking-wider uppercase">SOLERO BRAVO</span>
           </div>
       </div>
     </div>

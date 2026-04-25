@@ -7,37 +7,39 @@ import { DEFAULT_CONFIGURATION, OPTIONS_DATA } from './constants';
 
 const getImageUrl = (item: ParasolInstance): string => {
   const config = item.config;
-  const baseUrl = 'https://shop.parasols.nl/configurator-test/Basto/';
-  const { size, clothColor, baseType, heaters, lux, tegels, afdekplaat, wielen } = config;
+  const baseUrl = 'https://parasols-shop.com/configurator-test/Bravo/';
+  const { frameColor, clothColor, baseType } = config;
 
-  let folderAndFileSuffix: string = baseType;
-
-  if (baseType === 'tegelstandaardzilver') {
-      let suffix = 'tegelstandaardzilver';
-      if (afdekplaat) {
-          suffix = 'tegelstandaardzilver-afdekplaatzilver';
-      } else if (tegels) {
-          suffix = 'tegelstandaardzilver-tegels';
-      }
-      if (wielen) {
-          suffix += '-wielen75mm';
-      }
-      folderAndFileSuffix = suffix;
-  } else if (baseType === 'veiligheidstandaard') {
-      if (tegels) {
-          folderAndFileSuffix += '-tegels';
-      }
+  // Frame prefix: Zilvergrijs (silver) -> "5t-", Zwart (black) -> ""
+  const framePrefix = frameColor === 'silver' ? '5t-' : '';
+  
+  // Base suffix logic based on analyzed file list
+  let baseSuffix = '';
+  if (baseType === 'grey-base') {
+    baseSuffix = '-base';
+  } else if (baseType === 'grey-base-wheels') {
+    baseSuffix = '-base-wheels';
+  } else if (baseType === 'black-base' || baseType === 'black-base-wheels') {
+    // Determine if we use "baseblack" or "blackbase"
+    // The user's list has some inconsistencies:
+    // e.g., "5t-quattro-sand-blackbase.png" vs "quattro-sand-baseblack.png"
+    let baseName = 'baseblack'; // Default for most grey, olive, red, taupe, white, whiteblue
+    
+    if (clothColor === 'black') {
+      baseName = 'blackbase';
+    } else if (clothColor === 'sand') {
+      if (frameColor === 'silver') baseName = 'blackbase';
+      else baseName = 'baseblack';
+    }
+    
+    const wheelsSuffix = baseType.includes('wheels') ? '-wheels' : '';
+    baseSuffix = `-${baseName}${wheelsSuffix}`;
+  } else if (baseType === 'anchor') {
+    baseSuffix = '-anchor';
   }
-  
-  const folder = `Basto-${size}/${folderAndFileSuffix}/`;
-  let fileName = `Basto-${size}-${clothColor}`;
-  
-  if (heaters !== '0') fileName += `-${heaters}heliosa`;
-  if (lux) fileName += '-lux';
-  if (folderAndFileSuffix !== 'zonder-voet') fileName += `-${folderAndFileSuffix}`;
 
-  fileName += '.png';
-  return baseUrl + folder + fileName;
+  const fileName = `${framePrefix}quattro-${clothColor}${baseSuffix}.png`;
+  return baseUrl + fileName;
 };
 
 const OrientationHint: React.FC = () => {
@@ -72,19 +74,17 @@ function App() {
     const config = item.config;
     let total = OPTIONS_DATA.basePrice;
     const { 
-        size, clothColor, baseType, heaters, lux, tegels, 
-        afdekplaat, wielen, protectiveCover, gutterEnabled, gutterLength 
+        size, frameColor, clothColor, baseType, heaters, 
+        protectiveCover, ledEnabled, gutterEnabled, gutterLength 
     } = config;
 
     total += OPTIONS_DATA.size.options.find(o => o.value === size)?.price || 0;
+    total += OPTIONS_DATA.frameColor.options.find(o => o.value === frameColor)?.price || 0;
     total += OPTIONS_DATA.clothColor.options.find(o => o.value === clothColor)?.price || 0;
     total += OPTIONS_DATA.baseType.options.find(o => o.value === baseType)?.price || 0;
     total += OPTIONS_DATA.heaters.options.find(o => o.value === heaters)?.price || 0;
-    if (lux) total += OPTIONS_DATA.lux.price;
-    if (tegels) total += OPTIONS_DATA.tegels.price;
-    if (afdekplaat) total += OPTIONS_DATA.afdekplaat.price;
-    if (wielen) total += OPTIONS_DATA.wielen.price;
     if (protectiveCover) total += OPTIONS_DATA.protectiveCover.price;
+    if (ledEnabled) total += OPTIONS_DATA.led.price;
 
     // Gutter price calculation
     if (gutterEnabled) {
@@ -105,19 +105,8 @@ function App() {
       
       const nextConfig = { ...item.config, ...updates };
       
-      // Auto-switch & Compatibility logic
-      if (nextConfig.size === '5x5' && nextConfig.baseType === 'tegelstandaardzilver') {
-        nextConfig.baseType = 'zonder-voet';
-      }
-      const isTegelsCompatible = 
-        (nextConfig.size === '4x4' && (nextConfig.baseType === 'tegelstandaardzilver' || nextConfig.baseType === 'veiligheidstandaard')) ||
-        (nextConfig.size === '5x5' && nextConfig.baseType === 'veiligheidstandaard');
-      if (!isTegelsCompatible) nextConfig.tegels = false;
-      const isAfdekplaatCompatible = nextConfig.size === '4x4' && nextConfig.baseType === 'tegelstandaardzilver';
-      if (!isAfdekplaatCompatible) nextConfig.afdekplaat = false;
-      const isWielenCompatible = nextConfig.size === '4x4' && nextConfig.baseType === 'tegelstandaardzilver';
-      if (!isWielenCompatible) nextConfig.wielen = false;
-
+      // Auto-switch & Compatibility logic can be added here if needed for Bravo
+      
       return { ...item, config: nextConfig };
     }));
   }, [activeId]);

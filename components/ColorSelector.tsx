@@ -32,7 +32,7 @@ export const ColorSelector = <T extends string>({
                 ${isSelected ? 'border-[#c8813f] scale-110 shadow-sm' : 'border-gray-200'}
                 ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:scale-110'}
               `}
-              style={{ backgroundColor: option.colorCode }}
+              style={{ background: option.colorCode }}
             >
               <span className="sr-only">{option.label}</span>
               {isSelected && (

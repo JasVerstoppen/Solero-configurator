@@ -1,9 +1,11 @@
 
-export type Size = '4x4' | '5x5';
+export type Size = '520x520' | '620x620';
 
-export type ClothColor = 'charcoal' | 'marine' | 'parelwit' | 'platinumgrijs' | 'rood' | 'spa' | 'taupe' | 'zand' | 'zwart';
+export type FrameColor = 'silver' | 'black';
 
-export type BaseType = 'zonder-voet' | 'grondanker' | 'tegelstandaardzilver' | 'veiligheidstandaard';
+export type ClothColor = 'grey' | 'olive' | 'red' | 'taupe' | 'white' | 'whiteblue' | 'black' | 'sand';
+
+export type BaseType = 'none' | 'grey-base' | 'grey-base-wheels' | 'black-base' | 'black-base-wheels' | 'anchor';
 
 export type Heaters = '0' | '1' | '2' | '3' | '4';
 
@@ -14,15 +16,13 @@ export type GutterLength = '300' | '330' | '350' | '400' | '500';
 
 export interface Configuration {
   size: Size;
+  frameColor: FrameColor;
   clothColor: ClothColor;
   baseType: BaseType;
   heaters: Heaters;
-  lux: boolean;
-  tegels: boolean;
-  afdekplaat: boolean;
-  wielen: boolean;
   protectiveCover: boolean;
   background: BackgroundId;
+  ledEnabled: boolean;
   // Gutter integrated into parasol config
   gutterEnabled: boolean;
   gutterLength: GutterLength;
@@ -58,15 +58,14 @@ export interface BackgroundOption {
 export interface OptionsData {
   basePrice: number;
   size: { label: string; options: Option<Size>[] };
+  frameColor: { label: string; options: Option<FrameColor>[] };
   clothColor: { label: string; options: ColorOption[] };
   baseType: { label: string; options: Option<BaseType>[] };
   heaters: { label: string; options: Option<Heaters>[] };
-  lux: { label: string; price: number };
-  tegels: { label: string; price: number };
-  afdekplaat: { label: string; price: number };
-  wielen: { label: string; price: number };
   protectiveCover: { label: string; price: number };
+  led: { label: string; price: number };
   gutter: {
+    label: string;
     basePrice: number;
     lengths: Option<GutterLength>[];
     colors: ColorOption[];

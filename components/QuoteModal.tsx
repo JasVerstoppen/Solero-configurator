@@ -11,37 +11,30 @@ interface QuoteModalProps {
 
 const getThumbnailUrl = (item: ParasolInstance): string => {
   const config = item.config;
-  const baseUrl = 'https://shop.parasols.nl/configurator-test/Basto/';
-  const { size, clothColor, baseType, heaters, lux, tegels, afdekplaat, wielen } = config;
+  const baseUrl = 'https://parasols-shop.com/configurator-test/Bravo/';
+  const { frameColor, clothColor, baseType } = config;
 
-  let folderAndFileSuffix: string = baseType;
-
-  if (baseType === 'tegelstandaardzilver') {
-      let suffix = 'tegelstandaardzilver';
-      if (afdekplaat) {
-          suffix = 'tegelstandaardzilver-afdekplaatzilver';
-      } else if (tegels) {
-          suffix = 'tegelstandaardzilver-tegels';
-      }
-      if (wielen) {
-          suffix += '-wielen75mm';
-      }
-      folderAndFileSuffix = suffix;
-  } else if (baseType === 'veiligheidstandaard') {
-      if (tegels) {
-          folderAndFileSuffix += '-tegels';
-      }
+  const framePrefix = frameColor === 'silver' ? '5t-' : '';
+  let baseSuffix = '';
+  if (baseType === 'grey-base') {
+    baseSuffix = '-base';
+  } else if (baseType === 'grey-base-wheels') {
+    baseSuffix = '-base-wheels';
+  } else if (baseType === 'black-base' || baseType === 'black-base-wheels') {
+    let baseName = 'baseblack'; 
+    if (clothColor === 'black') {
+      baseName = 'blackbase';
+    } else if (clothColor === 'sand') {
+      if (frameColor === 'silver') baseName = 'blackbase';
+      else baseName = 'baseblack';
+    }
+    const wheelsSuffix = baseType.includes('wheels') ? '-wheels' : '';
+    baseSuffix = `-${baseName}${wheelsSuffix}`;
+  } else if (baseType === 'anchor') {
+    baseSuffix = '-anchor';
   }
-  
-  const folder = `Basto-${size}/${folderAndFileSuffix}/`;
-  let fileName = `Basto-${size}-${clothColor}`;
-  
-  if (heaters !== '0') fileName += `-${heaters}heliosa`;
-  if (lux) fileName += '-lux';
-  if (folderAndFileSuffix !== 'zonder-voet') fileName += `-${folderAndFileSuffix}`;
 
-  fileName += '.png';
-  return baseUrl + folder + fileName;
+  return baseUrl + `${framePrefix}quattro-${clothColor}${baseSuffix}.png`;
 };
 
 export const QuoteModal: React.FC<QuoteModalProps> = ({ parasols, totalPrice, onClose }) => {
@@ -67,19 +60,17 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ parasols, totalPrice, on
     const config = item.config;
     let total = OPTIONS_DATA.basePrice;
     const { 
-        size, clothColor, baseType, heaters, lux, tegels, 
-        afdekplaat, wielen, protectiveCover, gutterEnabled, gutterLength 
+        size, frameColor, clothColor, baseType, heaters, 
+        protectiveCover, ledEnabled, gutterEnabled, gutterLength 
     } = config;
 
     total += OPTIONS_DATA.size.options.find(o => o.value === size)?.price || 0;
+    total += OPTIONS_DATA.frameColor.options.find(o => o.value === frameColor)?.price || 0;
     total += OPTIONS_DATA.clothColor.options.find(o => o.value === clothColor)?.price || 0;
     total += OPTIONS_DATA.baseType.options.find(o => o.value === baseType)?.price || 0;
     total += OPTIONS_DATA.heaters.options.find(o => o.value === heaters)?.price || 0;
-    if (lux) total += OPTIONS_DATA.lux.price;
-    if (tegels) total += OPTIONS_DATA.tegels.price;
-    if (afdekplaat) total += OPTIONS_DATA.afdekplaat.price;
-    if (wielen) total += OPTIONS_DATA.wielen.price;
     if (protectiveCover) total += OPTIONS_DATA.protectiveCover.price;
+    if (ledEnabled) total += OPTIONS_DATA.led.price;
 
     if (gutterEnabled) {
         total += OPTIONS_DATA.gutter.basePrice;
@@ -99,20 +90,18 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ parasols, totalPrice, on
     parasols.forEach((p, idx) => {
       const config = p.config;
       const sizeLabel = OPTIONS_DATA.size.options.find(o => o.value === config.size)?.label;
+      const frameLabel = OPTIONS_DATA.frameColor.options.find(o => o.value === config.frameColor)?.label;
       const colorLabel = OPTIONS_DATA.clothColor.options.find(o => o.value === config.clothColor)?.label;
       const baseLabel = OPTIONS_DATA.baseType.options.find(o => o.value === config.baseType)?.label;
       
       const acc = [
         config.heaters !== '0' ? `${config.heaters}x Heliosa Heaters` : null,
-        config.lux ? 'LUX LED Verlichting' : null,
-        config.tegels ? 'Inclusief Tegels' : null,
-        config.afdekplaat ? 'Met Afdekplaat' : null,
-        config.wielen ? 'Met 75mm Zwenkwielen' : null,
         config.protectiveCover ? 'Inclusief Beschermhoes' : null,
-        config.gutterEnabled ? `Regengoot (${OPTIONS_DATA.gutter.lengths.find(l => l.value === config.gutterLength)?.label}, ${OPTIONS_DATA.gutter.colors.find(c => c.value === config.gutterColor)?.label})` : null,
+        config.ledEnabled ? 'Inclusief Geïntegreerde LED verlichting' : null,
+        config.gutterEnabled ? `${OPTIONS_DATA.gutter.label} (Standaard lengte)` : null,
       ].filter(Boolean);
 
-      const itemText = `Model: Solero Basto\nAfmeting: ${sizeLabel}\nDoekkleur: ${colorLabel}\nVoettype: ${baseLabel}\nACCESSOIRES: ${acc.length > 0 ? acc.join(', ') : 'Geen'}`;
+      const itemText = `Model: Solero Bravo\nAfmeting: ${sizeLabel}\nFrame: ${frameLabel}\nDoekkleur: ${colorLabel}\nVoettype: ${baseLabel}\nACCESSOIRES: ${acc.length > 0 ? acc.join(', ') : 'Geen'}`;
 
       const key = `Parasol ${idx + 1}`;
       itemDetails[key] = itemText;
@@ -121,12 +110,12 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ parasols, totalPrice, on
 
     const totalPriceStr = totalPrice.toLocaleString('nl-NL', { minimumFractionDigits: 2 });
 
-    const fullEmailText = `KLANTGEGEVENS:\nNaam: ${formData.name}\nE-mail: ${formData.email}\nTelefoon: ${formData.phone}\n\n${itemsText}PRIJSINDICATIE: € ${totalPriceStr} (incl. BTW)\n\nOPMERKING: ${formData.message || 'Geen'}`;
+    const fullEmailText = `KLANTGEGEVENS:\nNaam: ${formData.name}\nE-mail: ${formData.email}\nTelefoon: ${formData.phone}\n\n${itemsText}PRIJSINDICATIE: € ${totalPriceStr} (Excl. BTW)\n\nOPMERKING: ${formData.message || 'Geen'}`;
 
     const payload = {
       customer: formData,
       config: {
-        model: 'Solero Configurator Project',
+        model: 'Solero Bravo Configurator Project',
         ...itemDetails,
         totalPrice: totalPriceStr
       },
@@ -241,17 +230,23 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ parasols, totalPrice, on
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-1">
                         <h5 className="text-[11px] font-black text-gray-900 uppercase tracking-tight">{p.label}</h5>
-                        <span className="text-xs font-black text-[#008000]">€{calculateItemPrice(p).toLocaleString('nl-NL', { minimumFractionDigits: 2 })}</span>
                       </div>
                       <div className="space-y-1 text-[10px] text-gray-500 font-medium">
                         <p className="flex items-center gap-2">
                            <span className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 font-bold">{OPTIONS_DATA.size.options.find(o => o.value === p.config.size)?.label}</span>
                            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                           <span className="font-bold text-gray-600 uppercase text-[9px]">{OPTIONS_DATA.frameColor.options.find(o => o.value === p.config.frameColor)?.label}</span>
+                           <span className="w-1 h-1 rounded-full bg-gray-300"></span>
                            <span className="font-bold text-gray-600">{OPTIONS_DATA.clothColor.options.find(o => o.value === p.config.clothColor)?.label}</span>
                         </p>
                         {p.config.gutterEnabled && (
                             <p className="flex items-center gap-2 text-blue-600 font-bold">
-                                <span>+ Regengoot {OPTIONS_DATA.gutter.lengths.find(l => l.value === p.config.gutterLength)?.label}</span>
+                                <span>+ {OPTIONS_DATA.gutter.label}</span>
+                            </p>
+                        )}
+                        {p.config.ledEnabled && (
+                            <p className="flex items-center gap-2 text-amber-600 font-bold">
+                                <span>+ Inclusief LED Verlichting</span>
                             </p>
                         )}
                         <p className="truncate">Voet: <span className="text-gray-700">{OPTIONS_DATA.baseType.options.find(o => o.value === p.config.baseType)?.label}</span></p>
@@ -262,12 +257,8 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ parasols, totalPrice, on
               })}
             </div>
             
-            <div className="mt-5 pt-4 border-t-2 border-dashed border-orange-200 flex justify-between items-center">
-              <div>
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Project Totaal</span>
-                <span className="text-[9px] text-gray-400 font-medium italic leading-none">Inclusief BTW</span>
-              </div>
-              <span className="text-xl font-black text-[#008000] tabular-nums">€{totalPrice.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}</span>
+            <div className="mt-5 pt-4 border-t-2 border-dashed border-orange-200">
+              {/* Total price hidden at user request */}
             </div>
           </div>
 

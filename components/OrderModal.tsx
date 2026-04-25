@@ -11,37 +11,30 @@ interface OrderModalProps {
 
 const getThumbnailUrl = (item: ParasolInstance): string => {
   const config = item.config;
-  const baseUrl = 'https://shop.parasols.nl/configurator-test/Basto/';
-  const { size, clothColor, baseType, heaters, lux, tegels, afdekplaat, wielen } = config;
+  const baseUrl = 'https://parasols-shop.com/configurator-test/Bravo/';
+  const { frameColor, clothColor, baseType } = config;
 
-  let folderAndFileSuffix: string = baseType;
-
-  if (baseType === 'tegelstandaardzilver') {
-      let suffix = 'tegelstandaardzilver';
-      if (afdekplaat) {
-          suffix = 'tegelstandaardzilver-afdekplaatzilver';
-      } else if (tegels) {
-          suffix = 'tegelstandaardzilver-tegels';
-      }
-      if (wielen) {
-          suffix += '-wielen75mm';
-      }
-      folderAndFileSuffix = suffix;
-  } else if (baseType === 'veiligheidstandaard') {
-      if (tegels) {
-          folderAndFileSuffix += '-tegels';
-      }
+  const framePrefix = frameColor === 'silver' ? '5t-' : '';
+  let baseSuffix = '';
+  if (baseType === 'grey-base') {
+    baseSuffix = '-base';
+  } else if (baseType === 'grey-base-wheels') {
+    baseSuffix = '-base-wheels';
+  } else if (baseType === 'black-base' || baseType === 'black-base-wheels') {
+    let baseName = 'baseblack'; 
+    if (clothColor === 'black') {
+      baseName = 'blackbase';
+    } else if (clothColor === 'sand') {
+      if (frameColor === 'silver') baseName = 'blackbase';
+      else baseName = 'baseblack';
+    }
+    const wheelsSuffix = baseType.includes('wheels') ? '-wheels' : '';
+    baseSuffix = `-${baseName}${wheelsSuffix}`;
+  } else if (baseType === 'anchor') {
+    baseSuffix = '-anchor';
   }
-  
-  const folder = `Basto-${size}/${folderAndFileSuffix}/`;
-  let fileName = `Basto-${size}-${clothColor}`;
-  
-  if (heaters !== '0') fileName += `-${heaters}heliosa`;
-  if (lux) fileName += '-lux';
-  if (folderAndFileSuffix !== 'zonder-voet') fileName += `-${folderAndFileSuffix}`;
 
-  fileName += '.png';
-  return baseUrl + folder + fileName;
+  return baseUrl + `${framePrefix}quattro-${clothColor}${baseSuffix}.png`;
 };
 
 const PAYMENT_METHODS = [
@@ -84,18 +77,15 @@ export const OrderModal: React.FC<OrderModalProps> = ({ parasols, totalPrice, on
     const config = item.config;
     let total = OPTIONS_DATA.basePrice;
     const { 
-        size, clothColor, baseType, heaters, lux, tegels, 
-        afdekplaat, wielen, protectiveCover, gutterEnabled, gutterLength 
+        size, frameColor, clothColor, baseType, heaters, 
+        protectiveCover, gutterEnabled, gutterLength 
     } = config;
 
     total += OPTIONS_DATA.size.options.find(o => o.value === size)?.price || 0;
+    total += OPTIONS_DATA.frameColor.options.find(o => o.value === frameColor)?.price || 0;
     total += OPTIONS_DATA.clothColor.options.find(o => o.value === clothColor)?.price || 0;
     total += OPTIONS_DATA.baseType.options.find(o => o.value === baseType)?.price || 0;
     total += OPTIONS_DATA.heaters.options.find(o => o.value === heaters)?.price || 0;
-    if (lux) total += OPTIONS_DATA.lux.price;
-    if (tegels) total += OPTIONS_DATA.tegels.price;
-    if (afdekplaat) total += OPTIONS_DATA.afdekplaat.price;
-    if (wielen) total += OPTIONS_DATA.wielen.price;
     if (protectiveCover) total += OPTIONS_DATA.protectiveCover.price;
 
     if (gutterEnabled) {
@@ -116,21 +106,19 @@ export const OrderModal: React.FC<OrderModalProps> = ({ parasols, totalPrice, on
     parasols.forEach((p, idx) => {
       const config = p.config;
       const sizeLabel = OPTIONS_DATA.size.options.find(o => o.value === config.size)?.label;
+      const frameLabel = OPTIONS_DATA.frameColor.options.find(o => o.value === config.frameColor)?.label;
       const colorLabel = OPTIONS_DATA.clothColor.options.find(o => o.value === config.clothColor)?.label;
       const baseLabel = OPTIONS_DATA.baseType.options.find(o => o.value === config.baseType)?.label;
       
       const acc = [
         config.heaters !== '0' ? `${config.heaters}x Heliosa Heaters` : null,
-        config.lux ? 'LUX LED Verlichting' : null,
-        config.tegels ? 'Inclusief Tegels' : null,
-        config.afdekplaat ? 'Met Afdekplaat' : null,
-        config.wielen ? 'Met 75mm Zwenkwielen' : null,
         config.protectiveCover ? 'Inclusief Beschermhoes' : null,
         config.gutterEnabled ? `Regengoot (${OPTIONS_DATA.gutter.lengths.find(l => l.value === config.gutterLength)?.label}, ${OPTIONS_DATA.gutter.colors.find(c => c.value === config.gutterColor)?.label})` : null,
       ].filter(Boolean);
 
-      const itemText = `Model: Solero Basto
+      const itemText = `Model: Solero Bravo
 Afmeting: ${sizeLabel}
+Frame: ${frameLabel}
 Doekkleur: ${colorLabel}
 Voettype: ${baseLabel}
 ACCESSOIRES: ${acc.length > 0 ? acc.join(', ') : 'Geen'}`;
@@ -143,7 +131,7 @@ ACCESSOIRES: ${acc.length > 0 ? acc.join(', ') : 'Geen'}`;
     const totalPriceStr = totalPrice.toLocaleString('nl-NL', { minimumFractionDigits: 2 });
     const paymentLabel = PAYMENT_METHODS.find(m => m.id === formData.paymentMethod)?.label;
 
-    const fullEmailText = `NIEUWE ONLINE BESTELLING: Solero Basto
+    const fullEmailText = `NIEUWE ONLINE BESTELLING: Solero Bravo
 ======================================
 
 KLANTGEGEVENS:
@@ -178,7 +166,7 @@ OPMERKINGEN: ${formData.notes || 'Geen'}`;
         message: formData.notes
       },
       config: {
-        model: 'Online Bestelling Solero Basto',
+        model: 'Online Bestelling Solero Bravo',
         ...itemDetails,
         totalPrice: totalPriceStr,
         paymentMethod: paymentLabel
@@ -362,12 +350,15 @@ OPMERKINGEN: ${formData.notes || 'Geen'}`;
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-1">
                         <h5 className="text-[11px] font-black text-gray-900 uppercase tracking-tight">{p.label}</h5>
-                        <span className="text-xs font-black text-[#008000] tabular-nums">€{itemPrice.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}</span>
                       </div>
                       <div className="space-y-1 text-[10px] text-gray-500 font-medium">
                         <p className="flex items-center gap-2">
                             <span className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 font-bold">
                                 {OPTIONS_DATA.size.options.find(o => o.value === config.size)?.label}
+                            </span>
+                            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                            <span className="font-bold text-gray-600 uppercase text-[9px]">
+                                {OPTIONS_DATA.frameColor.options.find(o => o.value === config.frameColor)?.label}
                             </span>
                             <span className="w-1 h-1 rounded-full bg-gray-300"></span>
                             <span className="font-bold text-gray-600">
@@ -380,7 +371,6 @@ OPMERKINGEN: ${formData.notes || 'Geen'}`;
                             {config.heaters !== '0' && (
                                 <span className="bg-orange-100/50 text-[#c8813f] px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase">{config.heaters}x Heaters</span>
                             )}
-                            {config.lux && <span className="bg-orange-100/50 text-[#c8813f] px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase">LED</span>}
                             {config.gutterEnabled && (
                                 <span className="bg-blue-100/50 text-blue-600 px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase">Regengoot {OPTIONS_DATA.gutter.lengths.find(l => l.value === config.gutterLength)?.label}</span>
                             )}
@@ -392,12 +382,8 @@ OPMERKINGEN: ${formData.notes || 'Geen'}`;
               })}
             </div>
 
-            <div className="pt-6 border-t-2 border-dashed border-orange-200 flex justify-between items-center">
-                <div>
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Totaalbedrag</span>
-                  <span className="text-[9px] text-gray-400 font-medium italic leading-none">Inclusief BTW</span>
-                </div>
-                <span className="text-2xl lg:text-3xl font-black text-[#008000] tabular-nums">€{totalPrice.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}</span>
+            <div className="pt-6 border-t-2 border-dashed border-orange-200">
+                {/* Prices hidden at user request */}
             </div>
 
             <button 

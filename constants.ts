@@ -2,19 +2,17 @@
 import { type Configuration, type OptionsData, type BackgroundOption } from './types';
 
 export const DEFAULT_CONFIGURATION: Configuration = {
-  size: '4x4',
-  clothColor: 'charcoal',
-  baseType: 'zonder-voet',
+  size: '520x520',
+  frameColor: 'silver',
+  clothColor: 'grey',
+  baseType: 'none',
   heaters: '0',
-  lux: false,
-  tegels: false,
-  afdekplaat: false,
-  wielen: false,
   protectiveCover: true,
   background: 'none',
-  gutterEnabled: false,
+  ledEnabled: true,
+  gutterEnabled: true,
   gutterLength: '300',
-  gutterColor: 'zwart',
+  gutterColor: 'grijs',
 };
 
 export const BACKGROUND_OPTIONS: BackgroundOption[] = [
@@ -33,60 +31,66 @@ export const BACKGROUND_OPTIONS: BackgroundOption[] = [
 ];
 
 export const OPTIONS_DATA: OptionsData = {
-  basePrice: 2199.00,
+  basePrice: 0,
   size: {
     label: 'Afmeting',
     options: [
-      { value: '4x4', label: 'Basto 4x4', price: 0 },
-      { value: '5x5', label: 'Basto 5x5', price: 300.00 },
+      { value: '520x520', label: 'Basto 520x520', price: 0 },
+      { value: '620x620', label: 'Basto 620x620', price: 0 },
+    ],
+  },
+  frameColor: {
+    label: 'Frame kleur',
+    options: [
+      { value: 'silver', label: 'Zilvergrijs', price: 0 },
+      { value: 'black', label: 'Zwart', price: 0 },
     ],
   },
   clothColor: {
     label: 'Doekkleur',
     options: [
-        { value: 'charcoal', label: 'Charcoal', price: 0, colorCode: '#36454F' },
-        { value: 'marine', label: 'Marine', price: 0, colorCode: '#000080' },
-        { value: 'parelwit', label: 'Parelwit', price: 0, colorCode: '#F8F8FF' },
-        { value: 'platinumgrijs', label: 'Platinumgrijs', price: 0, colorCode: '#a9a9a9' },
-        { value: 'rood', label: 'Rood', price: 0, colorCode: '#FF0000' },
-        { value: 'spa', label: 'Spa', price: 0, colorCode: '#A9D7D1' },
+        { value: 'grey', label: 'Platinumgrijs', price: 0, colorCode: '#A9A9A9' },
+        { value: 'olive', label: 'Olijf', price: 0, colorCode: '#808000' },
+        { value: 'red', label: 'Rood', price: 0, colorCode: '#FF0000' },
+        { value: 'sand', label: 'Zand', price: 0, colorCode: '#E6D2B5' },
         { value: 'taupe', label: 'Taupe', price: 0, colorCode: '#483C32' },
-        { value: 'zand', label: 'Zand', price: 0, colorCode: '#C2B280' },
-        { value: 'zwart', label: 'Zwart', price: 0, colorCode: '#000000' },
+        { value: 'white', label: 'Parelwit', price: 0, colorCode: '#F8F8FF' },
+        { value: 'whiteblue', label: 'Wit Blauw gestreept', price: 0, colorCode: 'repeating-linear-gradient(45deg, #ffffff, #ffffff 5px, #000080 5px, #000080 10px)' },
+        { value: 'black', label: 'Zwart', price: 0, colorCode: '#000000' },
     ],
   },
   baseType: {
     label: 'Voettype',
     options: [
-      { value: 'zonder-voet', label: 'Zonder voet', price: 0 },
-      { value: 'grondanker', label: 'Grondanker', price: 199.00 },
-      { value: 'tegelstandaardzilver', label: 'Tegelstandaard', price: 325.00 },
-      { value: 'veiligheidstandaard', label: 'Veiligheidstandaard', price: 399.00 },
+      { value: 'none', label: 'Zonder voet', price: 0 },
+      { value: 'grey-base', label: 'Grijze voet', price: 0 },
+      { value: 'grey-base-wheels', label: 'Grijze voet op wielen', price: 0 },
+      { value: 'black-base', label: 'Zwarte voet', price: 0 },
+      { value: 'black-base-wheels', label: 'Zwarte voet op wielen', price: 0 },
+      { value: 'anchor', label: 'Grondanker', price: 0 },
     ],
   },
   heaters: {
       label: 'Heliosa Heaters',
       options: [
         { value: '0', label: 'Geen', price: 0 },
-        { value: '1', label: '1 Heater', price: 249.00 },
-        { value: '2', label: '2 Heaters', price: 498.00 },
-        { value: '3', label: '3 Heaters', price: 747.00 },
-        { value: '4', label: '4 Heaters', price: 996.00 },
+        { value: '1', label: '1 Heater', price: 0 },
+        { value: '2', label: '2 Heaters', price: 0 },
+        { value: '3', label: '3 Heaters', price: 0 },
+        { value: '4', label: '4 Heaters', price: 0 },
       ]
   },
-  lux: { label: 'LUX LED Verlichting', price: 199.99 },
-  tegels: { label: 'Met Tegels', price: 111.32 },
-  afdekplaat: { label: 'Met Afdekplaat', price: 189.00 },
-  wielen: { label: '75mm Zwenkwielen', price: 98.00 },
   protectiveCover: { label: 'Beschermhoes', price: 0 },
+  led: { label: 'Geïntegreerde LED verlichting op accu', price: 0 },
   gutter: {
-    basePrice: 149.00,
+    label: 'Regengoten',
+    basePrice: 0,
     lengths: [
       { value: '300', label: '300 cm', price: 0 },
-      { value: '330', label: '330 cm', price: 15.00 },
-      { value: '350', label: '350 cm', price: 25.00 },
-      { value: '400', label: '400 cm', price: 45.00 },
-      { value: '500', label: '500 cm', price: 85.00 },
+      { value: '330', label: '330 cm', price: 0 },
+      { value: '350', label: '350 cm', price: 0 },
+      { value: '400', label: '400 cm', price: 0 },
+      { value: '500', label: '500 cm', price: 0 },
     ],
     colors: [
       { value: 'zwart', label: 'Zwart', price: 0, colorCode: '#000000' },
