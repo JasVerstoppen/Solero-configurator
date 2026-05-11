@@ -17,7 +17,7 @@ export const ColorSelector = <T extends string>({
   disabledOptions = [] 
 }: ColorSelectorProps<T>) => {
   return (
-    <div className="flex flex-wrap gap-x-3 gap-y-4 lg:gap-4">
+    <div className="grid grid-cols-4 lg:grid-cols-5 gap-x-2 gap-y-4 lg:gap-4">
       {options.map((option) => {
         const isSelected = selectedValue === option.value;
         const isDisabled = disabledOptions.includes(option.value as T);

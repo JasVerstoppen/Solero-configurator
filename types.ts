@@ -1,5 +1,5 @@
 
-export type Size = '520x520' | '620x620';
+export type Size = '520x520' | '620x620' | 'duo-520x250' | 'duo-620x300';
 
 export type FrameColor = 'silver' | 'black';
 
@@ -23,6 +23,7 @@ export interface Configuration {
   protectiveCover: boolean;
   background: BackgroundId;
   ledEnabled: boolean;
+  installationService: boolean;
   // Gutter integrated into parasol config
   gutterEnabled: boolean;
   gutterLength: GutterLength;
@@ -64,6 +65,7 @@ export interface OptionsData {
   heaters: { label: string; options: Option<Heaters>[] };
   protectiveCover: { label: string; price: number };
   led: { label: string; price: number };
+  installationService: { label: string; price: number };
   gutter: {
     label: string;
     basePrice: number;

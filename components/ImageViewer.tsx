@@ -56,31 +56,10 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({ imageUrl, currentBackg
     <div className="relative flex-1 bg-white flex items-center justify-center h-full overflow-hidden transition-colors duration-500">
       {/* Subtle Logo Watermark */}
       <div className="absolute top-4 right-4 lg:top-8 lg:right-8 z-20 opacity-30 pointer-events-none">
-        <img src="https://shop.parasols.nl/media/queldorei/shopper/logo.png" alt="" className="h-6 lg:h-10 object-contain grayscale brightness-50" />
+        <img src="https://shop.parasols.nl/media/queldorei/shopper/logo.png" alt="" className="h-6 lg:h-10 object-contain grayscale brightness-50" referrerPolicy="no-referrer" />
       </div>
 
-      {/* Background Selector UI */}
-      <div className="absolute top-4 left-4 lg:top-6 lg:left-6 z-30 flex flex-col gap-2 lg:gap-3">
-        <h4 className="text-[9px] lg:text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white/60 px-1 rounded w-fit">Achtergrond</h4>
-        <div className="flex gap-2">
-            {BACKGROUND_OPTIONS.map((bg) => (
-                <button
-                    key={bg.id}
-                    onClick={() => onBackgroundChange(bg.id)}
-                    className={`group relative w-10 h-10 lg:w-16 lg:h-16 rounded-lg overflow-hidden border-2 transition-all duration-300 shadow-sm
-                        ${currentBackground === bg.id ? 'border-[#c8813f] ring-2 ring-orange-50 scale-105' : 'border-white hover:border-gray-300 hover:scale-105'}
-                    `}
-                    title={bg.label}
-                >
-                    <img 
-                        src={bg.thumbnail} 
-                        alt={bg.label} 
-                        className="w-full h-full object-cover"
-                    />
-                </button>
-            ))}
-        </div>
-      </div>
+      {/* Background Selector UI - Removed for now as requested */}
 
       {/* Zoom Controls UI - Compact & Subtle on mobile */}
       <div className="absolute bottom-4 right-4 lg:bottom-6 lg:right-6 z-[60] flex items-center gap-0.5 lg:gap-1 bg-white/80 lg:bg-white/90 backdrop-blur-md p-1 lg:p-1.5 rounded-full shadow-lg lg:shadow-xl border border-gray-100/50 lg:border-gray-100 transition-all duration-300">
@@ -126,6 +105,7 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({ imageUrl, currentBackg
                     src={selectedBg.url}
                     alt="Scene background"
                     className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
                 />
             </div>
         )}
@@ -144,19 +124,16 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({ imageUrl, currentBackg
                         setIsLoading(false);
                         setHasError(true);
                     }}
+                    referrerPolicy="no-referrer"
                     className={`object-contain w-full h-full p-6 lg:p-12 drop-shadow-2xl transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
                 />
             </div>
         ) : (
-            <FallbackImage />
+            <div className="w-full h-full flex flex-col items-center justify-center bg-gray-100 z-10 transition-opacity duration-300">
+                <FallbackImage />
+                <p className="mt-2 text-[8px] text-gray-300 font-mono text-center">Afbeelding wordt geladen of configuration niet beschikbaar</p>
+            </div>
         )}
-      </div>
-
-      {/* Product Tag Badge */}
-      <div className="absolute bottom-4 left-4 lg:bottom-6 lg:left-6 z-30 pointer-events-none">
-          <div className="bg-white/70 lg:bg-white/80 backdrop-blur-sm px-2.5 py-1 lg:px-3 lg:py-1.5 rounded-full shadow-sm border border-gray-100/30 lg:border-gray-100">
-              <span className="text-[8px] lg:text-[10px] font-bold text-gray-900 tracking-wider uppercase">SOLERO BRAVO</span>
-          </div>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { type Configuration, type ParasolInstance } from '../types';
 import { OPTIONS_DATA } from '../constants';
+import { TRANSLATIONS, type Language } from '../translations';
 import { OptionSection } from './OptionSection';
 import { RadioButtonGroup } from './RadioButtonGroup';
 import { ColorSelector } from './ColorSelector';
@@ -15,6 +16,7 @@ interface ConfigPanelProps {
   onRemoveParasol: (id: string) => void;
   onConfigurationChange: (newConfig: Partial<Configuration>) => void;
   totalPrice: number;
+  lang: Language;
 }
 
 const AccessoryCheckbox: React.FC<{
@@ -24,26 +26,29 @@ const AccessoryCheckbox: React.FC<{
     checked: boolean;
     onChange: (checked: boolean) => void;
     disabled?: boolean;
-}> = ({ id, label, price, checked, onChange, disabled = false }) => (
-    <div className="flex items-center justify-between py-0.5 px-0.5">
+    hidePrice?: boolean;
+}> = ({ id, label, price, checked, onChange, disabled = false, hidePrice = false }) => (
+    <div className={`flex items-center justify-between py-0.5 px-0.5 ${disabled ? 'opacity-70' : ''}`}>
         <div className="flex items-center">
             <input
                 id={id}
                 type="checkbox"
                 checked={checked}
-                onChange={(e) => onChange(e.target.checked)}
+                onChange={(e) => !disabled && onChange(e.target.checked)}
                 disabled={disabled}
-                className="h-3.5 w-3.5 lg:h-4.5 lg:w-4.5 text-[#c8813f] border-gray-300 rounded focus:ring-0 cursor-pointer"
+                className={`h-3.5 w-3.5 lg:h-4.5 lg:w-4.5 ${disabled ? 'text-gray-400 cursor-not-allowed' : 'text-[#c8813f] cursor-pointer'} border-gray-300 rounded focus:ring-0`}
             />
-            <label htmlFor={id} className={`ml-2 text-[11px] lg:text-xs font-semibold ${disabled ? 'text-gray-500 cursor-default' : 'text-gray-800 cursor-pointer hover:text-[#c8813f]'}`}>
-                {label} {disabled && <span className="text-[9px] font-bold text-green-600 ml-1 uppercase leading-none">(Inbegrepen)</span>}
+            <label htmlFor={id} className={`ml-2 text-[11px] lg:text-xs font-semibold ${disabled ? 'text-gray-400 cursor-not-allowed' : 'text-gray-800 cursor-pointer hover:text-[#c8813f]'}`}>
+                {label}
             </label>
         </div>
-        <span className={`text-[9px] lg:text-xs font-bold ${disabled ? 'text-green-600' : 'text-gray-700'}`}>
-            {price === 0 ? 'Gratis' : `+ €${price.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}`}
-        </span>
+        {!hidePrice && (
+            <span className={`text-[9px] lg:text-xs font-bold text-gray-700`}>
+                {price === 0 ? t.free : `+ €${price.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}`}
+            </span>
+        )}
     </div>
-);export const ConfigPanel: React.FC<ConfigPanelProps> = ({
+); export const ConfigPanel: React.FC<ConfigPanelProps> = ({
   parasols,
   activeId,
   onSwitchActive,
@@ -51,14 +56,14 @@ const AccessoryCheckbox: React.FC<{
   onRemoveParasol,
   onConfigurationChange,
   totalPrice,
+  lang,
 }) => {
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const t = TRANSLATIONS[lang];
 
   const activeItem = parasols.find(p => p.id === activeId) || parasols[0];
   const configuration = activeItem.config;
   
-  const { gutterEnabled } = configuration;
-
   return (
     <div className="flex flex-col h-full w-full bg-white overflow-hidden isolate">
       {/* Ultra Compact Header */}
@@ -66,10 +71,7 @@ const AccessoryCheckbox: React.FC<{
           <div className="flex items-center justify-between mb-4 lg:mb-5">
               <div className="flex flex-col gap-0">
                 <img src="https://shop.parasols.nl/media/queldorei/shopper/logo.png" alt="Solero" className="h-4 lg:h-6 object-contain object-left" />
-                <h2 className="text-[7px] lg:text-[10px] font-black text-gray-400 tracking-[0.2em] uppercase">Bravo Configurator</h2>
-              </div>
-              <div className="text-right">
-                {/* Price indicators removed at user request */}
+                <h2 className="text-[7px] lg:text-[10px] font-black text-gray-400 tracking-[0.2em] uppercase">{t.title}</h2>
               </div>
           </div>
 
@@ -100,7 +102,7 @@ const AccessoryCheckbox: React.FC<{
             <button 
               onClick={onAddParasol}
               className={`w-8 h-8 lg:w-11 lg:h-11 rounded-lg border-2 border-dashed border-gray-200 text-gray-300 hover:border-slate-400 hover:text-slate-500 hover:bg-slate-50 transition-all flex items-center justify-center shrink-0 active:scale-95`}
-              title="Voeg parasol toe"
+              title={t.addParasol}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 lg:h-5 lg:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
@@ -113,11 +115,11 @@ const AccessoryCheckbox: React.FC<{
       <div className="flex-1 overflow-y-auto px-5 py-3 lg:px-6 lg:py-6 space-y-6 lg:space-y-8 custom-scrollbar overscroll-contain">
         <div className="flex items-center justify-between border-b border-gray-100 pb-1 lg:pb-1.5">
             <h3 className="text-[8px] lg:text-[10px] font-black text-[#c8813f] uppercase tracking-widest">
-                Configuratie: {activeItem.label}
+                {t.configuration}: {activeItem.label}
             </h3>
         </div>
 
-        <OptionSection title={OPTIONS_DATA.size.label}>
+        <OptionSection title={t.size}>
           <RadioButtonGroup
             name="size"
             options={OPTIONS_DATA.size.options}
@@ -126,72 +128,102 @@ const AccessoryCheckbox: React.FC<{
           />
         </OptionSection>
 
-        <OptionSection title={OPTIONS_DATA.frameColor.label}>
+        <OptionSection title={t.frameColor}>
           <RadioButtonGroup
             name="frameColor"
-            options={OPTIONS_DATA.frameColor.options}
+            options={OPTIONS_DATA.frameColor.options.map(o => ({ ...o, label: t.labels[o.value as keyof typeof t.labels] || o.label }))}
             selectedValue={configuration.frameColor}
             onChange={(value) => onConfigurationChange({ frameColor: value })}
           />
         </OptionSection>
 
-        <OptionSection title={OPTIONS_DATA.clothColor.label}>
+        <OptionSection title={t.clothColor}>
           <ColorSelector
-            options={OPTIONS_DATA.clothColor.options}
+            options={OPTIONS_DATA.clothColor.options.map(o => ({ ...o, label: t.labels[o.value as keyof typeof t.labels] || o.label }))}
             selectedValue={configuration.clothColor}
             onChange={(value) => onConfigurationChange({ clothColor: value })}
           />
         </OptionSection>
 
-        <OptionSection title={OPTIONS_DATA.baseType.label}>
+        <OptionSection title={t.baseType}>
             <RadioButtonGroup
                 name="baseType"
-                options={OPTIONS_DATA.baseType.options}
+                options={OPTIONS_DATA.baseType.options.map(o => {
+                  if (o.value === 'none') return { ...o, label: t.labels.none };
+                  if (o.value === 'anchor') return { ...o, label: t.labels.anchor };
+                  
+                  // Construction: Voet/Fuß + Kleur + [op wielen/met Rollen]
+                  const isGrey = o.value.includes('grey');
+                  const hasWheels = o.value.includes('wheels');
+                  const colorLabel = isGrey ? t.labels.grey : t.labels.black;
+                  const wheelLabel = hasWheels ? ` ${t.labels.wheels}` : '';
+                  
+                  return { ...o, label: `${t.labels.base} ${colorLabel}${wheelLabel}` };
+                })}
                 selectedValue={configuration.baseType}
                 onChange={(value) => onConfigurationChange({ baseType: value })}
             />
         </OptionSection>
         
-        <OptionSection title="Comfort & Accessoires">
+        <OptionSection title={t.accessories}>
             <div className="space-y-5 lg:space-y-6">
                 <div className="space-y-2 lg:space-y-3">
-                    <label className="text-[7px] lg:text-[9px] font-bold text-gray-400 uppercase tracking-widest">Heaters</label>
+                    <label className="text-[7px] lg:text-[9px] font-bold text-gray-400 uppercase tracking-widest">{t.heaters}</label>
                     <RadioButtonGroup
                         name="heaters"
-                        options={OPTIONS_DATA.heaters.options}
+                        options={OPTIONS_DATA.heaters.options.map(o => {
+                          if (o.value === '0') return { ...o, label: t.labels.none };
+                          const count = o.value;
+                          let label = '';
+                          if (lang === 'de') {
+                            label = `${count} ${t.heaters_unit}`;
+                          } else if (lang === 'es') {
+                            label = `${count} ${t.heaters_unit}${count === '1' ? '' : 'es'}`;
+                          } else {
+                            label = `${count} ${t.heaters_unit}${count === '1' ? '' : 's'}`;
+                          }
+                          return { ...o, label };
+                        })}
                         selectedValue={configuration.heaters}
                         onChange={(value) => onConfigurationChange({ heaters: value })}
                     />
                 </div>
-                <AccessoryCheckbox
-                    id="protectiveCover"
-                    label={OPTIONS_DATA.protectiveCover.label}
-                    price={OPTIONS_DATA.protectiveCover.price}
-                    checked={configuration.protectiveCover}
-                    onChange={(value) => onConfigurationChange({ protectiveCover: value })}
-                    disabled={OPTIONS_DATA.protectiveCover.price === 0}
-                />
+                
                 <AccessoryCheckbox
                     id="ledEnabled"
-                    label={OPTIONS_DATA.led.label}
+                    label={t.labels.led}
                     price={OPTIONS_DATA.led.price}
                     checked={configuration.ledEnabled}
                     onChange={(value) => onConfigurationChange({ ledEnabled: value })}
-                    disabled={OPTIONS_DATA.led.price === 0}
+                    disabled={true}
+                    hidePrice={true}
                 />
-            </div>
-        </OptionSection>
-        
-        {/* Integrated Gutter Section */}
-        <OptionSection title={OPTIONS_DATA.gutter.label}>
-            <div className="space-y-4">
+
+                <AccessoryCheckbox
+                    id="protectiveCover"
+                    label={t.labels.protectiveCover}
+                    price={OPTIONS_DATA.protectiveCover.price}
+                    checked={configuration.protectiveCover}
+                    onChange={(value) => onConfigurationChange({ protectiveCover: value })}
+                    hidePrice={true}
+                />
+
                 <AccessoryCheckbox
                     id="gutterEnabled"
-                    label={OPTIONS_DATA.gutter.label}
+                    label={t.labels.gutter}
                     price={OPTIONS_DATA.gutter.basePrice}
-                    checked={gutterEnabled}
+                    checked={configuration.gutterEnabled}
                     onChange={(value) => onConfigurationChange({ gutterEnabled: value })}
-                    disabled={OPTIONS_DATA.gutter.basePrice === 0}
+                    hidePrice={true}
+                />
+
+                <AccessoryCheckbox
+                    id="installationService"
+                    label={t.labels.installation}
+                    price={OPTIONS_DATA.installationService.price}
+                    checked={configuration.installationService}
+                    onChange={(value) => onConfigurationChange({ installationService: value })}
+                    hidePrice={true}
                 />
             </div>
         </OptionSection>
@@ -210,7 +242,7 @@ const AccessoryCheckbox: React.FC<{
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 lg:h-5 lg:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <span className="text-[10px] lg:text-xs whitespace-nowrap">Project offerte aanvragen</span>
+                <span className="text-[10px] lg:text-xs whitespace-nowrap">{t.quote}</span>
             </button>
         </div>
       </footer>
@@ -220,6 +252,7 @@ const AccessoryCheckbox: React.FC<{
           parasols={parasols} 
           totalPrice={totalPrice} 
           onClose={() => setIsQuoteModalOpen(false)} 
+          lang={lang}
         />
       )}
     </div>

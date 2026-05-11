@@ -4,12 +4,13 @@ import { type Configuration, type OptionsData, type BackgroundOption } from './t
 export const DEFAULT_CONFIGURATION: Configuration = {
   size: '520x520',
   frameColor: 'silver',
-  clothColor: 'grey',
+  clothColor: 'platinum',
   baseType: 'none',
   heaters: '0',
   protectiveCover: true,
   background: 'none',
   ledEnabled: true,
+  installationService: false,
   gutterEnabled: true,
   gutterLength: '300',
   gutterColor: 'grijs',
@@ -25,8 +26,8 @@ export const BACKGROUND_OPTIONS: BackgroundOption[] = [
   {
     id: 'garden-1',
     label: 'Tuin 1',
-    url: 'https://shop.parasols.nl/configurator-test/Basto/Background/background-basto-1.png',
-    thumbnail: 'https://shop.parasols.nl/configurator-test/Basto/Background/background-basto-1.png',
+    url: 'https://shop.parasols.nl/configurator-test/Bravo/Background/background-bravo-1.jpg',
+    thumbnail: 'https://shop.parasols.nl/configurator-test/Bravo/Background/background-bravo-1.jpg',
   }
 ];
 
@@ -35,8 +36,10 @@ export const OPTIONS_DATA: OptionsData = {
   size: {
     label: 'Afmeting',
     options: [
-      { value: '520x520', label: 'Basto 520x520', price: 0 },
-      { value: '620x620', label: 'Basto 620x620', price: 0 },
+      { value: '520x520', label: 'Bravo Quattro LED 520x520cm', price: 0 },
+      { value: '620x620', label: 'Bravo Quattro LED XL 620x620cm', price: 0 },
+      { value: 'duo-520x250', label: 'Bravo Duo LED 520x250cm', price: 0 },
+      { value: 'duo-620x300', label: 'Bravo Duo LED XL 620x300cm', price: 0 },
     ],
   },
   frameColor: {
@@ -49,24 +52,24 @@ export const OPTIONS_DATA: OptionsData = {
   clothColor: {
     label: 'Doekkleur',
     options: [
-        { value: 'grey', label: 'Platinumgrijs', price: 0, colorCode: '#A9A9A9' },
+        { value: 'platinum', label: 'Platinumgrijs', price: 0, colorCode: '#A9A9A9' },
+        { value: 'black', label: 'Zwart', price: 0, colorCode: '#000000' },
         { value: 'olive', label: 'Olijf', price: 0, colorCode: '#808000' },
         { value: 'red', label: 'Rood', price: 0, colorCode: '#FF0000' },
         { value: 'sand', label: 'Zand', price: 0, colorCode: '#E6D2B5' },
         { value: 'taupe', label: 'Taupe', price: 0, colorCode: '#483C32' },
         { value: 'white', label: 'Parelwit', price: 0, colorCode: '#F8F8FF' },
         { value: 'whiteblue', label: 'Wit Blauw gestreept', price: 0, colorCode: 'repeating-linear-gradient(45deg, #ffffff, #ffffff 5px, #000080 5px, #000080 10px)' },
-        { value: 'black', label: 'Zwart', price: 0, colorCode: '#000000' },
     ],
   },
   baseType: {
     label: 'Voettype',
     options: [
       { value: 'none', label: 'Zonder voet', price: 0 },
-      { value: 'grey-base', label: 'Grijze voet', price: 0 },
-      { value: 'grey-base-wheels', label: 'Grijze voet op wielen', price: 0 },
-      { value: 'black-base', label: 'Zwarte voet', price: 0 },
-      { value: 'black-base-wheels', label: 'Zwarte voet op wielen', price: 0 },
+      { value: 'grey-base', label: 'Voet Grijs', price: 0 },
+      { value: 'grey-base-wheels', label: 'Voet Grijs op wielen', price: 0 },
+      { value: 'black-base', label: 'Voet Zwart', price: 0 },
+      { value: 'black-base-wheels', label: 'Voet Zwart op wielen', price: 0 },
       { value: 'anchor', label: 'Grondanker', price: 0 },
     ],
   },
@@ -81,7 +84,8 @@ export const OPTIONS_DATA: OptionsData = {
       ]
   },
   protectiveCover: { label: 'Beschermhoes', price: 0 },
-  led: { label: 'Geïntegreerde LED verlichting op accu', price: 0 },
+  led: { label: 'Geïntegreerde LED (inbegrepen)', price: 0 },
+  installationService: { label: 'Inclusief installatieservice', price: 0 },
   gutter: {
     label: 'Regengoten',
     basePrice: 0,

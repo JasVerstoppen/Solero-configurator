@@ -56,7 +56,13 @@ if (!empty($data['fullEmailText'])) {
     $config = $data['config'] ?? [];
     $message = "OFFERTE AANVRAAG\n====================\n\n";
     $message .= "Naam: " . ($customer['name'] ?? '-') . "\n";
-    $message .= "E-mail: " . ($customer['email'] ?? '-') . "\n\n";
+    $message .= "E-mail: " . ($customer['email'] ?? '-') . "\n";
+    $message .= "Telefoon: " . ($customer['phone'] ?? '-') . "\n";
+    $message .= "Bedrijf: " . ($customer['company'] ?? '-') . "\n";
+    $message .= "BTW: " . ($customer['vat'] ?? '-') . "\n";
+    $message .= "Adres: " . ($customer['address'] ?? '-') . "\n";
+    $message .= "Postcode: " . ($customer['zip'] ?? '-') . "\n";
+    $message .= "Woonplaats: " . ($customer['city'] ?? '-') . "\n\n";
     
     foreach ($config as $key => $val) {
         if (strpos($key, 'Parasol') === 0) {

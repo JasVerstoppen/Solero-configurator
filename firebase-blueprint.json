@@ -1,0 +1,29 @@
+{
+  "entities": {
+    "Quote": {
+      "title": "Quote Request",
+      "description": "A request for a price quote for one or more parasols.",
+      "type": "object",
+      "properties": {
+        "customerName": { "type": "string", "description": "Customer's full name" },
+        "customerEmail": { "type": "string", "format": "email", "description": "Customer's email address" },
+        "customerPhone": { "type": "string", "description": "Customer's phone number" },
+        "customerAddress": { "type": "string", "description": "Customer's address" },
+        "customerZip": { "type": "string", "description": "Customer's zip code" },
+        "customerCity": { "type": "string", "description": "Customer's city" },
+        "message": { "type": "string", "description": "Optional message from the customer" },
+        "items": { "type": "array", "items": { "type": "object" }, "description": "List of parasols in the quote" },
+        "totalPrice": { "type": "number", "description": "Total price of the project" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Time the quote was submitted" },
+        "type": { "type": "string", "enum": ["QUOTE", "ORDER"], "description": "Type of request" }
+      },
+      "required": ["customerName", "customerEmail", "customerPhone", "createdAt"]
+    }
+  },
+  "firestore": {
+    "quotes": {
+      "schema": "Quote",
+      "description": "Collection of all quote requests and orders."
+    }
+  }
+}
